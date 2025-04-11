@@ -101,7 +101,7 @@ except ImportError:
 
 📌 Recuerda ejecutar este bloque antes de llamar a cualquier función que descargue datos o modelos desde Kaggle.
 
-✅ Ejecutar el script principal para realizar las predicciones. 
+✅ Ejecutar el script principal para realizar las predicciones: ```python predict_ai_vs_human``` . 
 
 
 ---

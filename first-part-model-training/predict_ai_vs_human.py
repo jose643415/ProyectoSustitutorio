@@ -93,6 +93,6 @@ test_folder = os.path.join(alessandrasala79_ai_vs_human_generated_dataset_path, 
 image_paths = [os.path.join(test_folder, fname) for fname in os.listdir(test_folder) if fname.lower().endswith(".jpg")]
 
 # ─── EJECUTAR VISUALIZACIÓN Y PREDICCIÓN ───────────────────────────
-show_images_and_predictions(image_paths[:30], model, n_rows=10, n_cols=10)
+show_images_and_predictions(image_paths[:20], model, n_rows=10, n_cols=10)
 
 

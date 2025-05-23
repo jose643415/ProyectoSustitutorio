@@ -376,7 +376,3 @@ else:
     )
 
 resnet152v2_history.head()
-
-#resnet50_model.evaluate(test_ds)
-
-#resnet152_model.evaluate(test_ds)

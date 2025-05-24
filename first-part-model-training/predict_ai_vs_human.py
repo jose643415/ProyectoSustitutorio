@@ -25,6 +25,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import tensorflow as tf
 from tensorflow.keras.preprocessing import image
+import http.server
+import socketserver
 
 # ─── DESCARGA DE DATOS Y MODELO ─────────────────────────────────────
 alessandrasala79_ai_vs_human_generated_dataset_path = kagglehub.dataset_download(
@@ -88,11 +90,54 @@ def show_images_and_predictions(image_paths, model, n_rows=3, n_cols=5):
     print("\n📊 Tabla de predicciones:")
     print(df.to_string(index=False))
 
+def show_images_and_predictions_html(image_paths, model, output_file="predicciones.html", n_images=20):
+    predictions_data = []
+    n_images = min(len(image_paths), n_images)
+    html = ['<html><head><title>predictions</title></head><body>']
+    html.append('<h1>Image predictions</h1>')
+    html.append('<table border="1" style="border-collapse: collapse;"><tr><th>ID</th><th>Imagen</th>'
+                '<th>predictions</th><th>Real Label</th><th>Probability of Ia</th></tr>')
+
+    for idx in range(n_images):
+        img_path = image_paths[idx]
+        img_tensor = load_and_preprocess(img_path)
+        prediction = model.predict(img_tensor, verbose=0)[0][0]
+
+        predicted_label = "AI" if prediction > 0.5 else "Human"
+        true_label = "AI" if "AI" in os.path.basename(img_path).upper() else "Human"
+
+        predictions_data.append((idx + 1, img_path, predicted_label, true_label, round(prediction, 2)))
+
+        # Leer imagen como base64
+        import base64
+        from io import BytesIO
+        img = image.load_img(img_path, target_size=(IMG_SIZE, IMG_SIZE))
+        buf = BytesIO()
+        img.save(buf, format='JPEG')
+        img_b64 = base64.b64encode(buf.getvalue()).decode('utf-8')
+
+        html.append(f'<tr><td>{idx + 1}</td><td><img src="data:image/jpeg;base64,{img_b64}" width="100"/></td>'
+                    f'<td>{predicted_label}</td><td>{true_label}</td><td>{round(prediction, 2)}</td></tr>')
+
+    html.append('</table></body></html>')
+
+    with open(output_file, 'w', encoding='utf-8') as f:
+        f.write('\n'.join(html))
+
+    print(f"✅ Archivo HTML generado: {output_file}")
+
+
 # ─── CARGAR IMÁGENES ────────────────────────────────────────────────
 test_folder = os.path.join(alessandrasala79_ai_vs_human_generated_dataset_path, "test_data_v2")
 image_paths = [os.path.join(test_folder, fname) for fname in os.listdir(test_folder) if fname.lower().endswith(".jpg")]
 
 # ─── EJECUTAR VISUALIZACIÓN Y PREDICCIÓN ───────────────────────────
-show_images_and_predictions(image_paths[:20], model, n_rows=10, n_cols=10)
+#show_images_and_predictions(image_paths[:20], model, n_rows=10, n_cols=10)
+output_html = "/app/predicciones.html"
+show_images_and_predictions_html(image_paths[:20], model)
 
-
+print("🌐 Servidor web iniciado en http://localhost:8080/predicciones.html")
+PORT = 8080
+handler = http.server.SimpleHTTPRequestHandler
+httpd = socketserver.TCPServer(("", PORT), handler)
+httpd.serve_forever()

@@ -40,7 +40,7 @@ Durante el semestre, se desarrollarán distintos entregables enfocados en las et
 | Fase | Descripción | Estado |
 |------|-------------|--------|
 | ✅ FASE 1 | Selección y justificación del modelo | Completado |
-| 🔧 FASE 2 | Despliegue del modelo en contenedor Docker | En desarrollo |
+| ✅ FASE 2 | Despliegue del modelo en contenedor Docker | Completado |
 | 🔧 FASE 3 | Creación de API REST para inferencia | En desarrollo |
 
 ---
@@ -103,6 +103,44 @@ except ImportError:
 
 ✅ Ejecutar el script principal para realizar las predicciones: ```python predict_ai_vs_human``` . 
 
+## 🛠️ Instrucciones para ejecutar el código en su segunda fase
+
+### 🐍 Requisitos previos 
+
+Antes de ejecutar este proyecto, asegúrate de cumplir con los siguientes requisitos:
+- Tener instalado Docker, puedes hacerlo desde: https://docs.docker.com/get-started/get-docker/
+- Tener una cuenta en Kaggle
+- Descargar el archivo kaggle.json desde tu cuenta de Kaggle:
+  - Ir a tu perfil de Kaggle → Account → Create New API Token
+  - Se descargará un archivo llamado kaggle.json
+
+### 📁 Preparación
+
+Al igual que en los pasos para la ejecución de la primera parte de proyecto es necesario que tu archivo .kaggle este debidamente configurado en tu entorno local para poder descargar los datos y el modelo desde Kaggle de manera correcta.
+
+### 🐳 Ejecución del proyecto mediante Docker:
+
+Para ejecutar el proyecto, solo sigue estos pasos:
+
+1. Asegúrate de tener Docker instalado y tu archivo `kaggle.json` ubicado y accesible en tu máquina.
+
+2. Abre una terminal (PowerShell en Windows o terminal en Linux/macOS) y ejecuta:
+
+   - Descargar la imagen desde Docker Hub:
+   ```bash
+   docker pull josee/ai-human-detector:latest
+   ```
+   - Ejecutar el contenedor, montando tu carpeta `.kaggle` y exponiendo el puerto 8080:
+   ```bash
+   docker run --rm -v <Tu_ruta_del_.kaggle>:/root/.kaggle -p 8080:8080 jose643415/ia-human-detector:latest -c "python predict_ai_vs_human.py && python -m http.server 8080"
+   ```
+3. Luego, abre en tu navegador:
+```bash
+localhost:8080/predicciones.html
+```
+4. ¡Listo! Verás las imágenes y predicciones generadas por el modelo.
+
+**Nota**: Tener en cuenta que debido al volumen de datos que contiene el dataset la descarga puede variar en función de tu conexión a internet 
 
 ---
 
@@ -122,7 +160,8 @@ except ImportError:
 ## 🧪 Estado Actual
 
 - ⚙️ Se ha cargado y probado el modelo en local con TensorFlow
-- ⌛ Próximo paso: contenerización en Docker
+- ⚙️ Se ha llevado y probado el modelo en un entorno de Docker
+- ⌛ Próximo paso: crear una API para consumir el modelo
 
 ---
 
